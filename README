@@ -1,0 +1,3 @@
+Edit /usr/share/X11/xkb/compat/lednum and /ledcaps
+- Change !allowExplicit to just allowExplicit
+
