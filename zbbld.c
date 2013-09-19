@@ -47,10 +47,13 @@ static int get_battery_lights(int* urgent) {
   static int blink = 0;
 
   in = fopen("/sys/class/power_supply/BAT0/energy_full", "r");
+  if (!in) goto blink;
+
   fscanf(in, "%ld", &max);
   fclose(in);
 
   in = fopen("/sys/class/power_supply/BAT0/energy_now", "r");
+  if (!in) goto blink;
   fscanf(in, "%ld", &current);
   fclose(in);
 
@@ -63,6 +66,7 @@ static int get_battery_lights(int* urgent) {
     /* General case: Binary indicator */
     return per256 >> 5;
   else {
+    blink:
     /* Special case: Very low power; blink */
     *urgent = 1;
     blink = !blink;
@@ -71,6 +75,7 @@ static int get_battery_lights(int* urgent) {
 }
 static void set_wifi_light(int on) {
   FILE* out = fopen("/sys/class/leds/asus::wlan/brightness", "w");
+  if (!out) return;
   fprintf(out, "%d\n", on);
   fclose(out);
 }
@@ -88,6 +93,8 @@ static unsigned get_cpu_utilisation(void) {
   unsigned long idle_elapsed, total_elapsed;
   unsigned ret;
   FILE* in = fopen("/proc/stat", "r");
+  if (!in) return 0;
+
   fscanf(in, "cpu %ld %ld %ld %ld %ld %ld %ld",
          &user, &nice, &system, &idle, &io, &irq, &softirq);
   fclose(in);
