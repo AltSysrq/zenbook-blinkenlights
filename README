@@ -1,3 +1,40 @@
-Edit /usr/share/X11/xkb/compat/lednum and /ledcaps
-- Change !allowExplicit to just allowExplicit
+Zenbook Blinkenlights
+=====================
 
+This is a hackish C program which gives you faux-hardware status indicators for
+your Zenbook. In particular,
+
+- The WiFi, NumLock, and CapsLOCK lights are used as a 3-bit battery level
+  indicator, the WiFi light being the most significant bit. When battery level
+  drops below 6%, all three lights will begin blinking.
+
+- The keyboard backlight is used to indicate CPU usage. It reaches its
+  brightest status when the sum of usage across all CPUs exceeds the equivalent
+  of one CPU at 75%.
+
+Installation
+------------
+
+Edit `/usr/share/X11/xkb/compat/lednum` and …`/ledcaps`
+- Change `!allowExplicit` to just `allowExplicit`
+
+Make sure you have `asus-nb-wmi` in `/etc/modules` and loaded.
+
+Compile and install with
+```sh
+  cc -ozbbld zbbld.c
+  sudo cp zbbld /usr/local/bin/
+  sudo chmod +x /usr/local/bin/zbbld
+```
+
+You can then run it with, eg,
+```sh
+  zbbld &
+```
+
+Portability
+-----------
+This program only works on Linux, and probably will only work perfectly
+out-of-the-box if you happen to have the same hardware as I do. Some
+modification will probably be necessary if you have more or fewer than 8
+virtual CPUs.
